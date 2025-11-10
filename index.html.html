@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>💖 Happy Birthday 💖</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ffe0f0, #b3ecff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    color: #333;
+    text-align: center;
+  }
+
+  #game, #finalMessage {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+
+  #finalMessage { display: none; }
+
+  .heart {
+    position: absolute;
+    font-size: 34px;
+    cursor: pointer;
+    animation: floatUp 6s linear infinite;
+    user-select: none;
+  }
+
+  @keyframes floatUp {
+    from {transform: translateY(100vh) scale(1);}
+    to {transform: translateY(-10vh) scale(1.2); opacity: 0;}
+  }
+
+  .message-box {
+    position: absolute;
+    bottom: 120px;
+    background: rgba(255,255,255,0.8);
+    padding: 14px 20px;
+    border-radius: 16px;
+    font-size: 1em;
+    max-width: 80%;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+
+  #finalMessage {
+    padding: 20px;
+    font-size: 1.1em;
+    line-height: 1.5;
+    animation: fadeIn 1s ease forwards;
+  }
+
+  canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+
+  <div id="game"></div>
+
+  <div id="finalMessage">
+    <h2>🎉 Happy Birthday My Love 💕</h2>
+    <p>
+      You make every day brighter just by being you.  
+      I hope your birthday is full of laughter, peace, and love —  
+      because that’s exactly what you bring to my life. 💖  
+      <br><br>Always yours,  
+      <br>— Aditya 💌
+    </p>
+  </div>
+
+<script>
+  const heartMessages = [
+    "💌 You’re my favorite person ever.",
+    "🎂 Happiest birthday, my sunshine!",
+    "💖 You deserve the world and more.",
+    "🌈 You make my life magical.",
+    "💫 I’m so lucky to have you.",
+    "💕 One more thing..."
+  ];
+
+  const game = document.getElementById('game');
+  let index = 0;
+
+  window.onload = () => {
+    startGame();
+    playMusic();
+  };
+
+  function startGame() {
+    function spawnHeart() {
+      if (index >= heartMessages.length) return;
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = '💖';
+      heart.style.left = Math.random() * 90 + 'vw';
+      heart.style.animationDuration = (Math.random() * 2 + 4) + 's';
+      game.appendChild(heart);
+
+      heart.onclick = () => {
+        showMessage(heartMessages[index]);
+        heart.remove();
+        index++;
+        if (index < heartMessages.length) {
+          spawnHeart();
+        } else {
+          setTimeout(showFinalMessage, 2000);
+        }
+      };
+
+      setTimeout(spawnHeart, 2000);
+    }
+
+    spawnHeart();
+  }
+
+  function showMessage(text) {
+    const msg = document.createElement('div');
+    msg.className = 'message-box';
+    msg.textContent = text;
+    game.appendChild(msg);
+    setTimeout(() => msg.remove(), 2000);
+  }
+
+  function showFinalMessage() {
+    game.style.display = 'none';
+    document.getElementById('finalMessage').style.display = 'flex';
+    startConfetti();
+  }
+
+  // Confetti animation
+  const confettiCanvas = document.getElementById('confetti');
+  const ctx = confettiCanvas.getContext('2d');
+  let confetti = [];
+  const colors = ['#ffb3c6','#b5e48c','#fdfcdc','#caf0f8','#ffc8dd','#ffafcc'];
+  resizeCanvas();
+
+  window.addEventListener('resize', resizeCanvas);
+  function resizeCanvas() {
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+  }
+
+  function startConfetti() {
+    confetti = Array.from({length: 150}, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight - window.innerHeight,
+      r: Math.random() * 6 + 4,
+      d: Math.random() * 0.02 + 0.01,
+      color: colors[Math.floor(Math.random() * colors.length)]
+    }));
+    animateConfetti();
+  }
+
+  function animateConfetti() {
+    ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    confetti.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      p.y += p.d*100;
+      p.x += Math.sin(p.y*0.02);
+      if (p.y > window.innerHeight) p.y = -10;
+    });
+    requestAnimationFrame(animateConfetti);
+  }
+
+  // Music
+  function playMusic() {
+    const audio = new Audio("https://cdn.pixabay.com/download/audio/2023/03/15/audio_d4c5b02ed3.mp3?filename=happy-birthday-143356.mp3");
+    audio.play();
+  }
+</script>
+</body>
+</html>
